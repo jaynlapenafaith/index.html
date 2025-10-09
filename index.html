@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Faye's Game Portal 💜</title>
+  <style>
+    :root{--bg:#f3e9fb;--card:#fff;--accent:#ffcb05;--text:#2b004f}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:24px}
+    .app{width:900px;max-width:980px;min-height:600px;background:rgba(255,255,255,0.98);box-shadow:0 10px 30px rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:28px 20px;gap:12px}
+    h1{margin:0;font-size:30px;color:var(--text);display:flex;align-items:center;gap:8px;justify-content:center}
+    p.sub{margin:8px 0;color:var(--text)}
+    .login-card{width:320px;background:var(--card);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    label{display:block;font-size:13px;color:var(--text);margin-top:10px;text-align:left}
+    input[type=text],input[type=password]{width:100%;padding:10px;border-radius:8px;border:1px solid #eee;margin-top:6px;font-size:14px;background:#fafafa}
+    .btn{display:inline-block;margin-top:14px;padding:10px 16px;border-radius:10px;border:0;background:var(--accent);cursor:pointer;font-weight:700}
+    #puzzleSection,#videoSection{display:none;flex-direction:column;align-items:center;gap:12px;width:100%}
+    /* puzzle styles */
+    .qbox{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);width:90%;max-width:700px;margin:12px 0;text-align:left}
+    .qbox h3{margin:0 0 8px 0;color:var(--text);font-size:16px}
+    .qbox input[type=text]{width:100%;padding:12px;border-radius:10px;border:1px solid #eee;background:#fbfbfb}
+    .choices{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+    .choices button{margin:0;padding:10px 14px;border-radius:12px;border:0;background:var(--accent);font-weight:700;cursor:pointer}
+    .msg{margin-top:8px;font-weight:700}
+    .msg.ok{color:#1b7a2f}
+    .msg.err{color:#b12020}
+    #checkMsg{color:#b12020;font-weight:800;margin-top:12px;text-align:center}
+    .center{display:flex;justify-content:center}
+    /* ✅ VIDEO Responsive */
+    .video-container{
+      position:relative;
+      width:100%;
+      max-width:800px;
+      padding-bottom:56.25%; /* 16:9 ratio */
+      height:0;
+      overflow:hidden;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    }
+    .video-container iframe{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      border:0;
+    }
+    @media (max-width:640px){
+      html,body{padding:12px}
+      .app{padding:16px}
+      h1{font-size:22px}
+      .qbox{padding:12px}
+      .choices button{padding:8px 12px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="app" id="loginSection">
+    <h1>💜 Welcome! Please Log In 💜</h1>
+    <p class="sub">(Clue for Name: gamit mong name sa FB small letters no spacing / Password: nn ko sayo sa mess small letters no spacing)</p>
+    <div class="login-card">
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="Enter name" autocomplete="off" autocapitalize="none" />
+      <label for="pass">Password</label>
+      <input id="pass" type="password" placeholder="Enter password" />
+      <div class="center"><button class="btn" id="loginBtn">Log In</button></div>
+    </div>
+  </div>
+
+  <!-- PUZZLE -->
+  <div class="app" id="puzzleSection">
+    <h1>💜 Word Puzzle Time 💜</h1>
+    <p class="sub">Sagutin lahat para mag-proceed!</p>
+
+    <div class="qbox">
+      <h3>1. One of favourite fruits ni pitpit: <b>M_,_GG,_</b></h3>
+      <input id="q1" type="text" placeholder="Your answer" />
+      <div id="msg1" class="msg"></div>
+    </div>
+
+    <div class="qbox">
+      <h3>2. Sinong bibi ni pitpit? <b>P_,_,PA,_</b></h3>
+      <input id="q2" type="text" placeholder="Your answer" />
+      <div id="msg2" class="msg"></div>
+    </div>
+
+    <div class="qbox">
+      <h3>3. Love mo ko?</h3>
+      <div class="choices">
+        <button id="q3yes">Yes</button>
+        <button id="q3no">No</button>
+      </div>
+      <div id="msg3" class="msg"></div>
+    </div>
+
+    <div class="qbox">
+      <h3>4. # and tandem natin dalawa pag pinag sama</h3>
+      <div class="choices">
+        <button id="q4good">#pitpit&paypay</button>
+        <button id="q4bad">#blesiefayetot</button>
+      </div>
+      <div id="msg4" class="msg"></div>
+    </div>
+
+    <div class="qbox">
+      <h3>5. Proceed or exit?</h3>
+      <div class="choices">
+        <button id="finalProceed">Proceed</button>
+        <button id="exitBtn">Exit</button>
+      </div>
+      <div id="msg5" class="msg"></div>
+    </div>
+
+    <div id="checkMsg"></div>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="app" id="videoSection">
+    <h1>🎥 My bibi Lovelove 💜</h1>
+    <p class="sub">Cute mo dito love 😍</p>
+    <div class="video-container">
+      <iframe src="https://drive.google.com/file/d/1MahIeE99oNdbRiF0nlextR5Om3uYQyfJ/preview" allow="autoplay"></iframe>
+    </div>
+  </div>
+
+<script>
+/* ---------- LOGIN ---------- */
+document.getElementById('loginBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('name').value.trim().toLowerCase();
+  const pass = document.getElementById('pass').value.trim();
+  if (name.includes('faye') && name.includes('tiro') && pass === 'mylovepitpit') {
+    document.getElementById('loginSection').style.display='none';
+    document.getElementById('puzzleSection').style.display='flex';
+  } else {
+    alert('Incorrect Name or Password!');
+  }
+});
+
+/* ---------- PUZZLE ---------- */
+const q1=document.getElementById('q1'), q2=document.getElementById('q2');
+const msg1=document.getElementById('msg1'), msg2=document.getElementById('msg2'), msg3=document.getElementById('msg3'), msg4=document.getElementById('msg4'), msg5=document.getElementById('msg5');
+const checkMsg=document.getElementById('checkMsg');
+let q1ok=false,q2ok=false,a3='',a4='';
+
+function setMsg(el,text,ok){el.classList.remove('ok','err');if(ok===true){el.classList.add('ok');el.innerText=text;}else if(ok===false){el.classList.add('err');el.innerText=text;}else el.innerText='';}
+function validateQ1(){const v=q1.value.trim().toLowerCase();if(!v){q1ok=false;setMsg(msg1,'','');return;}if(v==='mangga'){q1ok=true;setMsg(msg1,'Correct answer pls proceed to next number',true);}else{q1ok=false;setMsg(msg1,'Answer is wrong',false);}}
+function validateQ2(){const v=q2.value.trim().toLowerCase();if(!v){q2ok=false;setMsg(msg2,'','');return;}if(v==='paypay'){q2ok=true;setMsg(msg2,'Correct answer pls proceed to next number',true);}else{q2ok=false;setMsg(msg2,'Wrong answer',false);}}
+document.getElementById('q3yes').onclick=()=>{a3='yes';setMsg(msg3,'Correct answer pls proceed to next number',true);}
+document.getElementById('q3no').onclick=()=>{a3='no';setMsg(msg3,'loh ayos ka ha',false);}
+document.getElementById('q4good').onclick=()=>{a4='#pitpit&paypay';setMsg(msg4,'Correct answer pls proceed to next number',true);}
+document.getElementById('q4bad').onclick=()=>{a4='#blesiefayetot';setMsg(msg4,'Wrong answer love',false);}
+document.getElementById('finalProceed').onclick=()=>{validateQ1();validateQ2();checkMsg.innerText='';if(q1ok&&q2ok&&a3==='yes'&&a4==='#pitpit&paypay'){document.getElementById('puzzleSection').style.display='none';document.getElementById('videoSection').style.display='flex';}else{checkMsg.innerText='May mali pa love 😅';}}
+document.getElementById('exitBtn').onclick=()=>{setMsg(msg5,'Kayy hindi bati ha 😤',false);}
+q1.addEventListener('input',validateQ1);q2.addEventListener('input',validateQ2);
+</script>
+</body>
+</html>
+
